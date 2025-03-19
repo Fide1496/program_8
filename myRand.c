@@ -4,26 +4,30 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-int main() {
-    srand(time(NULL));  // Seed random number generator
-    int X = rand() % 256;  // Generate a random number between 0 and 255
-
-    // Create file name
-    char filename[20];
-    snprintf(filename, sizeof(filename), "data%d.dat", X);
-
-    // Open file for writing
-    FILE *file = fopen(filename, "w");
-    if (!file) {
-        perror("Failed to open file");
-        return 1;
+int checkError(int val, const char *msg){
+    if (val == -1)
+    {
+        perror(msg);
+        exit(EXIT_FAILURE);
     }
+    return val;
+}
 
-    // Write 60 random numbers between 0 and 100
+int main() {
+    srand(time(NULL)); 
+    int X = rand() % 256;
+    
+    const char *output_file;
+    // char filename[20];
+    snprintf(output_file, sizeof(output_file), "data%d.dat", X);
+    output_file = "data%d.dat";
+
+    int output_fd = checkError(fopen(output_file, "w"), "Opening output file");
+
     for (int i = 0; i < 60; i++) {
-        fprintf(file, "%d\n", rand() % 101);
+        fprintf(output_fd, "%d\n", rand() % 101);
     }
     
-    fclose(file);
-    return X;  // Exit with status X
+    fclose(output_fd);
+    return X;  
 }
